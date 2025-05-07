@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
 
-export default function ImageSlider({ url, limit }) {
+export default function ImageSlider({ url, limit = 5, page = 1 }) {
   const [images, setImages] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -10,7 +10,7 @@ export default function ImageSlider({ url, limit }) {
   async function fetchImages(getUrl) {
     try {
       setLoading(true);
-      const repsonse = await fetch(getUrl);
+      const repsonse = await fetch(`${getUrl}?page=${page}&limit=${limit}`);
       const data = await repsonse.json();
       if (data) {
         setImages(data);
@@ -25,5 +25,14 @@ export default function ImageSlider({ url, limit }) {
   useEffect(() => {
     if (url !== "") fetchImages(url);
   }, [url]);
+
+  console.log(images);
+
+  if (loading) {
+    return <div>Loading data! Please wait</div>;
+  }
+  if (errorMessage !== null) {
+    return <div>Error occured! {errorMessage}</div>;
+  }
   return <div className="container">Hello</div>;
 }
